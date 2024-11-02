@@ -1,0 +1,11 @@
+set(lupdate_project_file "C:/LETI/OOP/Practice/Practice5/OOP5/CMakeLists.txt")
+set(lupdate_translations "C:/LETI/OOP/Practice/Practice5/OOP5/OOP4_ru_RU.ts")
+set(lupdate_include_paths "")
+set(lupdate_sources "")
+set(lupdate_subproject_count 1)
+
+set(lupdate_subproject1_source_dir "C:/LETI/OOP/Practice/Practice5/OOP5")
+set(lupdate_subproject1_include_paths "C:/LETI/OOP/Practice/Practice5/OOP5/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/OOP5_autogen/include;C:/Qt/6.8.0/mingw_64/include/QtCore;C:/Qt/6.8.0/mingw_64/include;C:/Qt/6.8.0/mingw_64/mkspecs/win32-g++;C:/Qt/6.8.0/mingw_64/include;C:/Qt/6.8.0/mingw_64/include/QtWidgets;C:/Qt/6.8.0/mingw_64/include;C:/Qt/6.8.0/mingw_64/include/QtGui;C:/Qt/6.8.0/mingw_64/include")
+set(lupdate_subproject1_sources "C:/LETI/OOP/Practice/Practice5/OOP5/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/OOP5_autogen/mocs_compilation.cpp;main.cpp;mainwindow.cpp;mainwindow.h;mainwindow.ui;polynom.h;array.h;complex.cpp;complex.h;number.h;polynom.cpp;polynom.h;array.cpp;C:/LETI/OOP/Practice/Practice5/OOP5/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/.qt/rcc/OOP5_translations.qrc;C:/LETI/OOP/Practice/Practice5/OOP5/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/OOP4_ru_RU.qm;C:/LETI/OOP/Practice/Practice5/OOP5/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/.qt/rcc/qrc_OOP5_translations.cpp;C:/LETI/OOP/Practice/Practice5/OOP5/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/OOP5_autogen/include/ui_mainwindow.h;C:/LETI/OOP/Practice/Practice5/OOP5/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/OOP5_autogen/timestamp;C:/LETI/OOP/Practice/Practice5/OOP5/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/OOP4_ru_RU.qm.rule;C:/LETI/OOP/Practice/Practice5/OOP5/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/.qt/rcc/qrc_OOP5_translations.cpp.rule;C:/LETI/OOP/Practice/Practice5/OOP5/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/OOP5_autogen/timestamp.rule")
+set(lupdate_subproject1_excluded "")
+set(lupdate_subproject1_autogen_dir "C:/LETI/OOP/Practice/Practice5/OOP5/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/OOP5_autogen")

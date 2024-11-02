@@ -1,0 +1,13 @@
+C:/LETI/OOP/Practice/Practice5/OOP5/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/CMakeFiles/OOP5.dir
+C:/LETI/OOP/Practice/Practice5/OOP5/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/CMakeFiles/OOP5_lupdate.dir
+C:/LETI/OOP/Practice/Practice5/OOP5/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/CMakeFiles/update_translations.dir
+C:/LETI/OOP/Practice/Practice5/OOP5/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/CMakeFiles/OOP5_lrelease.dir
+C:/LETI/OOP/Practice/Practice5/OOP5/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/CMakeFiles/release_translations.dir
+C:/LETI/OOP/Practice/Practice5/OOP5/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/CMakeFiles/edit_cache.dir
+C:/LETI/OOP/Practice/Practice5/OOP5/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/CMakeFiles/rebuild_cache.dir
+C:/LETI/OOP/Practice/Practice5/OOP5/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/CMakeFiles/list_install_components.dir
+C:/LETI/OOP/Practice/Practice5/OOP5/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/CMakeFiles/install.dir
+C:/LETI/OOP/Practice/Practice5/OOP5/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/CMakeFiles/install/local.dir
+C:/LETI/OOP/Practice/Practice5/OOP5/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/CMakeFiles/install/strip.dir
+C:/LETI/OOP/Practice/Practice5/OOP5/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/CMakeFiles/OOP5_autogen_timestamp_deps.dir
+C:/LETI/OOP/Practice/Practice5/OOP5/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/CMakeFiles/OOP5_autogen.dir

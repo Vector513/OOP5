@@ -1,0 +1,115 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-a96b10a2e953c797abac.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "OOP5",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "OOP5::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-OOP5-Debug-f0dd745a9a75c5d10ee2.json",
+					"name" : "OOP5",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "OOP5_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-OOP5_autogen-Debug-00c0cd43c9ed49dce34f.json",
+					"name" : "OOP5_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "OOP5_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-OOP5_autogen_timestamp_deps-Debug-d6a5519c2f1c8c48da6d.json",
+					"name" : "OOP5_autogen_timestamp_deps",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "OOP5_lrelease::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-OOP5_lrelease-Debug-253cdca5fce4b2cd2ef6.json",
+					"name" : "OOP5_lrelease",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "OOP5_lupdate::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-OOP5_lupdate-Debug-f1a4359a165c67a2745e.json",
+					"name" : "OOP5_lupdate",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "release_translations::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-release_translations-Debug-c1ac7bc90b8e52109d41.json",
+					"name" : "release_translations",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "update_translations::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-update_translations-Debug-ff84ba16dbf3eed50d35.json",
+					"name" : "update_translations",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/LETI/OOP/Practice/Practice5/OOP5/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug",
+		"source" : "C:/LETI/OOP/Practice/Practice5/OOP5"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 7
+	}
+}
