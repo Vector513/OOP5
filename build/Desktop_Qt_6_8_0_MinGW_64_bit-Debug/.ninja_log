@@ -1,0 +1,17 @@
+# ninja log v6
+5	91	7522537575694999	OOP4_ru_RU.qm	bea059b42b2a1c5
+5	91	7522537575694999	C:/LETI/OOP/Practice/Practice5/OOP5/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/OOP4_ru_RU.qm	bea059b42b2a1c5
+11	566	7522537579928555	OOP5_autogen/timestamp	d466cbc4429caaeb
+11	566	7522537579928555	OOP5_autogen/mocs_compilation.cpp	d466cbc4429caaeb
+11	566	7522537579928555	C:/LETI/OOP/Practice/Practice5/OOP5/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/OOP5_autogen/timestamp	d466cbc4429caaeb
+11	566	7522537579928555	C:/LETI/OOP/Practice/Practice5/OOP5/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/OOP5_autogen/mocs_compilation.cpp	d466cbc4429caaeb
+571	606	7522537580863151	.qt/rcc/qrc_OOP5_translations.cpp	efc170c2662a1fb1
+571	606	7522537580863151	C:/LETI/OOP/Practice/Practice5/OOP5/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/.qt/rcc/qrc_OOP5_translations.cpp	efc170c2662a1fb1
+625	696	7522537581171267	CMakeFiles/OOP5.dir/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/.qt/rcc/qrc_OOP5_translations.cpp.obj	27e862296af7d783
+622	1916	7522537581134767	CMakeFiles/OOP5.dir/array.cpp.obj	ceee07f5a36bc70e
+618	2024	7522537581096547	CMakeFiles/OOP5.dir/polynom.cpp.obj	a4ecd52daf4b2fab
+606	2786	7522537580975728	CMakeFiles/OOP5.dir/OOP5_autogen/mocs_compilation.cpp.obj	50e915d7f5fdea45
+609	2839	7522537580999228	CMakeFiles/OOP5.dir/main.cpp.obj	9b6ad66b36dc3153
+612	2934	7522537581038054	CMakeFiles/OOP5.dir/mainwindow.cpp.obj	f7c8bd046166a882
+615	3761	7522537581070921	CMakeFiles/OOP5.dir/complex.cpp.obj	35c629d42835e893
+3761	4956	7522537612531981	OOP5.exe	bc7f254f964e5b4e

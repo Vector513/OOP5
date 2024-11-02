@@ -117,7 +117,7 @@ MainWindow::~MainWindow()
     delete output;
 }
 
-void MainWindow::setCoef() {
+void MainWindow::setRoot() {
     QString str("Добавлен корень");
     number num(inputRe->text().toDouble(), inputIm->text().toDouble());
     polynom.addRoot(num);

@@ -38,7 +38,7 @@ public:
 
 public slots:
 
-    void setCoef();
+    void setRoot();
     void setAn();
     void printPolynomClassic();
     void printPolynomCanon();

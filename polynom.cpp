@@ -14,14 +14,14 @@ void Polynom::fillRoots(const std::string& input) {
     calculateCoefs();
 }
 
-Array Polynom::multiplyPolynomials(const Array& poly1, const Array& poly2) {
+Array Polynom::multiplyPolynomials(const Array& roots1, const Array& roots2) {
     Array result;
-    size_t newSize = poly1.getSize() + poly2.getSize() - 1;
+    size_t newSize = roots1.getSize() + roots2.getSize() - 1;
     result.resize(newSize);
 
-    for (size_t i = 0; i < poly1.getSize(); ++i) {
-        for (size_t j = 0; j < poly2.getSize(); ++j) {
-            result[i + j] += poly1[i] * poly2[j];
+    for (size_t i = 0; i < roots1.getSize(); ++i) {
+        for (size_t j = 0; j < roots2.getSize(); ++j) {
+            result[i + j] += roots1[i] * roots2[j];
         }
     }
 
