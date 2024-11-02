@@ -24,14 +24,13 @@ public:
     void addRoot(const number& newRoot);
     void setAn(const number& newAn);
     size_t getDegree() const;
-    number getAn();
-    Array getRoots();
-    Array getCoefs();
+    const number& getAn() const;
+    const Array& getRoots() const;
+    const Array& getCoefs() const;
     number evaluate(const number& x) const;
 
     void resize(const int newSize);
 
-    std::string formatComplex(const number& complex) const;
     void show(std::ostream& output, bool isFirstForm = true) const;
 };
 

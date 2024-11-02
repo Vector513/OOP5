@@ -37,20 +37,27 @@ void Polynom::calculateCoefs() {
         factor.add(-roots[i]);
         factor.add(1.0);
         currentPoly = multiplyPolynomials(currentPoly, factor);
-    }
+    }// result[0] = (3-4i)*(-2-2i) = -6 - 6i + 8i -8 = -14 + 2i
+     // result[1] = (3-4i)*1 = 3-4i
 
     coefs = currentPoly;
 }
 
 void Polynom::setRoot(const int index, const number& newRoot) {
-    roots[index] = newRoot;
+    if (index == roots.getSize()) {
+        roots.add(newRoot);
+        degree++;
+    }
+    else if (index >= 0 && index < roots.getSize()) {
+        roots[index] = newRoot;
+    }
     calculateCoefs();
 }
 
 void Polynom::addRoot(const number& newRoot) {
     roots.add(newRoot);
-    calculateCoefs();
     degree++;
+    calculateCoefs();
 }
 
 void Polynom::setAn(const number& newAn) {
@@ -62,15 +69,15 @@ size_t Polynom::getDegree() const {
     return degree;
 }
 
-number Polynom::getAn() {
+const number& Polynom::getAn() const {
     return An;
 }
 
-Array Polynom::getRoots() {
+const Array& Polynom::getRoots() const {
     return roots;
 }
 
-Array Polynom::getCoefs() {
+const Array& Polynom::getCoefs() const {
     return coefs;
 }
 
@@ -87,49 +94,37 @@ number Polynom::evaluate(const number& x) const {
 void Polynom::resize(const int newSize) {
     roots.resize(newSize);
     coefs.resize(newSize);
-}
-
-std::string Polynom::formatComplex(const number& num) const {
-    double re = num.getRe();
-    double im = num.getIm();
-    std::ostringstream result;
-    result << std::fixed << std::setprecision(2);
-
-    if (re != 0) {
-        result << re;
-    }
-
-    if (im > 0) {
-        result << (re != 0 ? " + " : "") << im << "i";
-    }
-    else if (im < 0) {
-        result << (re != 0 ? " - " : "") << -im << "i";
-    }
-
-    return result.str();
+    degree = roots.getSize();
 }
 
 void Polynom::show(std::ostream& output, bool isFirstForm) const {
     if (isFirstForm) {
         output << "p(x) = ";
         bool firstTerm = true;
+        bool needMinus = false;
         for (size_t i = coefs.getSize(); i-- > 0;) {
             if (coefs[i].getRe() != 0 || coefs[i].getIm() != 0) {
                 double re = coefs[i].getRe();
                 double im = coefs[i].getIm();
 
                 if (!firstTerm) {
-                    output << (re < 0 || (re == 0 && im < 0) ? " - " : " + ");
+                    needMinus = (re < 0 || (re == 0 && im < 0));
+                    output << (needMinus ? " - " : " + ");
+                }
+                else {
+                    firstTerm = false;
                 }
 
-                firstTerm = false;
-
-                if (re != 0) {
+                if (im == 0) {
                     output << std::abs(re);
                 }
-
-                if (im != 0) {
-                    output << (im > 0 ? " + " : " - ") << std::abs(im) << "i";
+                else {
+                    output << '(';
+                    if (re != 0) {
+                        output << std::abs(re);
+                    }
+                    output << ((im > 0) ^ (needMinus) ? " + " : " - ")
+                           << std::abs(im) << "i)";
                 }
 
                 if (i > 0) {
@@ -150,29 +145,40 @@ void Polynom::show(std::ostream& output, bool isFirstForm) const {
         output << "p(x) = ";
 
         if (An.getRe() != 0 || An.getIm() != 0) {
-            output << "(" << formatComplex(An) << ")";
-        }
-
-        for (size_t i = 0; i < roots.getSize(); ++i) {
-            output << "(x ";
-            double reRoot = roots[i].getRe();
-            double imRoot = roots[i].getIm();
-
-            if (reRoot != 0) {
-                output << (reRoot > 0 ? "- " : "+ ") << std::abs(reRoot);
+            if (An.getIm() == 0) {
+                output << std::abs(An.getRe());
+            }
+            else {
+                output << '(';
+                if (An.getRe() != 0) {
+                    output << std::abs(An.getRe());
+                }
+                output << (An.getIm() > 0 ? " + " : " - ")
+                       << std::abs(An.getIm()) << "i)";
             }
 
-            if (imRoot != 0) {
-                output << (imRoot > 0 ? " - " : " + ") << std::abs(imRoot) << "i";
+            if (roots.getSize() != 0) {
+
+                for (size_t i = 0; i < roots.getSize(); ++i) {
+                    output << "(x";
+                    double re = roots[i].getRe();
+                    double im = roots[i].getIm();
+
+                    if (re != 0) {
+                        output << (re > 0 ? " - " : " + ") << std::abs(re);
+                    }
+
+                    if (im != 0) {
+                        output << (im > 0 ? " - " : " + ") << std::abs(im) << "i";
+                    }
+
+                    output << ")";
+                }
             }
-
-            output << ")";
         }
-
-        if (roots.getSize() == 0 || (An.getRe() == 0 && An.getIm() == 0)) {
+        else {
             output << "0";
         }
-
         output << '\n';
     }
 }

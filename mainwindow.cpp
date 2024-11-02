@@ -77,9 +77,11 @@ MainWindow::MainWindow(QWidget *parent)
     showPolynomCanon->setGeometry(setCoefsX+35, setCoefsY+290, 110, 20);
 
     output = new QLabel(this);
+    output->setWordWrap(true);
+    output->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     output->setGeometry(setCoefsX, setCoefsY+320, 220, 20);
 
-    connect(createCoef, SIGNAL(pressed()), this, SLOT(setCoef()));
+    connect(createCoef, SIGNAL(pressed()), this, SLOT(setRoot()));
     connect(createAn, SIGNAL(pressed()), this, SLOT(setAn()));
     connect(showPolynomClassic, SIGNAL(pressed()), this, SLOT(printPolynomClassic()));
     connect(showPolynomCanon, SIGNAL(pressed()), this, SLOT(printPolynomCanon()));
@@ -132,28 +134,25 @@ void MainWindow::setAn() {
 }
 
 void MainWindow::printPolynomClassic() {
-    QString str("p(x)=");
+    QString str("p(x) = ");
     bool firstTerm = true;
+    bool needMinus = false;
     for (size_t i = polynom.getCoefs().getSize(); i-- > 0;) {
         if (polynom.getCoefs()[i].getRe() != 0 || polynom.getCoefs()[i].getIm() != 0) {
             double re = polynom.getCoefs()[i].getRe();
             double im = polynom.getCoefs()[i].getIm();
 
             if (!firstTerm) {
-                str+=(re < 0 || (re == 0 && im < 0) ? " - " : " + ");
+                needMinus = (re < 0 || (re == 0 && im < 0));
+                str+= needMinus ? " - " : " + ";
             }
-
-            firstTerm = false;
+            else {
+                firstTerm = false;
+            }
 
             if (im == 0) {
                 if (re != 0) {
                     str+=QString().setNum(std::abs(re));
-                }
-
-                if (im != 0) {
-                    str+=(im > 0 ? " + " : " - ");
-                    str+=QString().setNum(std::abs(im));
-                    str+="i";
                 }
             }
             else {
@@ -162,12 +161,13 @@ void MainWindow::printPolynomClassic() {
                 if (re != 0) {
                     str+=QString().setNum(std::abs(re));
                 }
-
-                if (im != 0) {
-                    str+=(im > 0 ? " - " : " + ");
-                    str+=QString().setNum(std::abs(im));
-                    str+="i";
-                }
+                // 1 im > 0 0 +
+                // 1 im > 0 1 -
+                // 0 im < 0 0 -
+                // 0 im < 0 1 +
+                str+=((im > 0)^(needMinus) ? " + " : " - ");
+                str+=QString().setNum(std::abs(im));
+                str+="i";
 
                 str+=")";
             }
@@ -189,37 +189,42 @@ void MainWindow::printPolynomClassic() {
     output->setText(str);
 
 }
-
+//str+=QString().setNum(std::abs(reRoot));
 void MainWindow::printPolynomCanon() {
-    QString str("p(x)=");
+    QString str("p(x) = ");
 
     if (polynom.getAn().getRe() != 0 || polynom.getAn().getIm() != 0) {
-        str+="(";
-        str+=polynom.formatComplex(polynom.getAn());
-        str+=")";
-    }
-
-    for (size_t i = 0; i < polynom.getRoots().getSize(); ++i) {
-        str+="(x ";
-        double reRoot = polynom.getRoots()[i].getRe();
-        double imRoot = polynom.getRoots()[i].getIm();
-
-        if (reRoot != 0) {
-            str+=(reRoot > 0 ? "- " : "+ ");
-            str+=QString().setNum(std::abs(reRoot));
+        if (polynom.getAn().getIm() == 0) {
+            str += QString().setNum(std::abs(polynom.getAn().getRe()));
+        }
+        else {
+            str += "(";
+            if (polynom.getAn().getRe() != 0) {
+                str += QString().setNum(std::abs(polynom.getAn().getRe()));
+            }
+            str += ((polynom.getAn().getIm() > 0) ? " + " : " - ") + QString().setNum(std::abs(polynom.getAn().getIm())) + "i)";
         }
 
-        if (imRoot != 0) {
-            str+=(imRoot > 0 ? " - " : " + ");
-            str+=QString().setNum(std::abs(imRoot));
-            str+="i";
-        }
+        if (polynom.getRoots().getSize() != 0) {
+            for (size_t i = 0; i < polynom.getRoots().getSize(); ++i) {
+                str += "(x";
+                double re = polynom.getRoots()[i].getRe();
+                double im = polynom.getRoots()[i].getIm();
 
-        str+=")";
+                if (re != 0) {
+                    str += (re > 0 ? " - " : " + ") +  QString().setNum(std::abs(re));
+                }
+
+                if (im != 0) {
+                    str += (im > 0 ? " - " : " + ") + QString().setNum(std::abs(im)) + "i";
+                }
+                str += ")";
+            }
+        }
     }
 
-    if (polynom.getRoots().getSize() == 0 && (polynom.getAn().getRe() == 0 && polynom.getAn().getIm() == 0)) {
-        str+="0";
+    else {
+        str += "0";
     }
     output->setText(str);
 }

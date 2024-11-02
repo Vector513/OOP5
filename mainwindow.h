@@ -45,6 +45,7 @@ public slots:
     void changeCoef();
     void evaluateSlot();
     void resizeSlot();
+
 private:
     Ui::MainWindow *ui;
 };
