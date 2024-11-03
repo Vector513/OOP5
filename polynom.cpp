@@ -95,6 +95,7 @@ void Polynom::resize(const int newSize) {
     roots.resize(newSize);
     coefs.resize(newSize);
     degree = roots.getSize();
+    calculateCoefs();
 }
 
 void Polynom::show(std::ostream& output, bool isFirstForm) const {

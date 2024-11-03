@@ -5,167 +5,323 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-    ui->setupUi(this);
+    setWindowTitle("Polynomial");
+    setMinimumSize(400, 300);
 
-    setWindowTitle("Real trap shit");
-    setFixedSize(frameWidth, frameHeight);
+    QWidget *centralWidget = new QWidget(this);
+    setCentralWidget(centralWidget);
+    QVBoxLayout *mainLayout = new QVBoxLayout(centralWidget);
+    centralWidget->setStyleSheet("QWidget { background-color: #b5b5b5; }");
 
-    nameRe = new QLabel("Коэффициент: ", this);
-    nameRe->setGeometry(setCoefsX, setCoefsY, 90, 20);
 
-    inputRe = new QLineEdit("1", this);
-    inputRe->setGeometry(setCoefsX+90, setCoefsY, 30, 20);
-
-    nameIm = new QLabel(" + i*", this);
-    nameIm->setGeometry(setCoefsX+120, setCoefsY, 25, 20);
-
-    inputIm = new QLineEdit("0", this);
-    inputIm->setGeometry(setCoefsX+145, setCoefsY, 30, 20);
-
-    createCoef = new QPushButton("Добавить корень", this);
-    createCoef->setGeometry(setCoefsX+35, setCoefsY+30, 110, 20);
-
-    changeCoefButton = new QPushButton("Изм. корень под индексом", this);
-    changeCoefButton->setGeometry(setCoefsX, setCoefsY+50, 165, 20);
-
-    changeCoefIndex = new QLineEdit("0", this);
-    changeCoefIndex->setGeometry(setCoefsX+170, setCoefsY+50, 30, 20);
-
-    nameAnRe = new QLabel("An: ", this);
-    nameAnRe->setGeometry(setCoefsX+35, setCoefsY+90, 20, 20);
-
-    inputAnRe = new QLineEdit("1", this);
-    inputAnRe->setGeometry(setCoefsX+55, setCoefsY+90, 30, 20);
-
-    nameAnIm = new QLabel(" + i*", this);
-    nameAnIm->setGeometry(setCoefsX+85, setCoefsY+90, 25, 20);
-
-    inputAnIm = new QLineEdit("0", this);
-    inputAnIm->setGeometry(setCoefsX+110, setCoefsY+90, 30, 20);
-
-    createAn = new QPushButton("Задать An", this);
-    createAn->setGeometry(setCoefsX+35, setCoefsY+120, 90, 20);
-
-    nameEvaluateRe = new QLabel("Вычислить в точке", this);
-    nameEvaluateRe->setGeometry(setCoefsX, setCoefsY+150, 130, 20);
-
-    inputEvaluateRe = new QLineEdit("1", this);
-    inputEvaluateRe->setGeometry(setCoefsX+110, setCoefsY+150, 30, 20);
-
-    nameEvaluateIm = new QLabel(" + i*", this);
-    nameEvaluateIm->setGeometry(setCoefsX+140, setCoefsY+150, 25, 20);
-
-    inputEvaluateIm = new QLineEdit("0", this);
-    inputEvaluateIm->setGeometry(setCoefsX+165, setCoefsY+150, 30, 20);
-
-    evaluateButton = new QPushButton("Вычислить  ", this);
-    evaluateButton->setGeometry(setCoefsX+35, setCoefsY+180, 90, 20);
-
-    nameResize = new QLabel("Изменить макс. размер массива:", this);
-    nameResize->setGeometry(setCoefsX, setCoefsY+210, 180, 20);
-
-    inputResize = new QLineEdit("1", this);
-    inputResize->setGeometry(setCoefsX+185, setCoefsY+210, 30, 20);
-
-    resizeButton = new QPushButton("Изменить", this);
-    resizeButton->setGeometry(setCoefsX+35, setCoefsY+240, 90, 20);
-
-    showPolynomClassic = new QPushButton("Класс. полином", this);
-    showPolynomClassic->setGeometry(setCoefsX+35, setCoefsY+270, 110, 20);
-
-    showPolynomCanon = new QPushButton("Канон. полином", this);
-    showPolynomCanon->setGeometry(setCoefsX+35, setCoefsY+290, 110, 20);
-
-    output = new QLabel(this);
-    output->setWordWrap(true);
-    output->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    output->setGeometry(setCoefsX, setCoefsY+320, 220, 20);
-
-    connect(createCoef, SIGNAL(pressed()), this, SLOT(setRoot()));
-    connect(createAn, SIGNAL(pressed()), this, SLOT(setAn()));
-    connect(showPolynomClassic, SIGNAL(pressed()), this, SLOT(printPolynomClassic()));
-    connect(showPolynomCanon, SIGNAL(pressed()), this, SLOT(printPolynomCanon()));
-    connect(changeCoefButton, SIGNAL(pressed()), this, SLOT(changeCoef()));
-    connect(evaluateButton, SIGNAL(pressed()), this, SLOT(evaluateSlot()));
-    connect(resizeButton, SIGNAL(pressed()), this, SLOT(resizeSlot()));
-
+    /*
+    QPlainTextEdit *inputAnAndRoots = new QPlainTextEdit(centralWidget);
+    inputAnAndRoots->setPlainText("Введите An и корни через пробел...");
+    mainLayout->addWidget(new QLabel("Ввод как в консоле"));
+    mainLayout->addWidget(inputAnAndRoots);
+    */
+    setupAnSection(centralWidget, mainLayout, inputAnRe, inputAnIm, changeAn);
+    setupRootSection(centralWidget, mainLayout, inputRootRe, inputRootIm, addRoot, inputIndex, changeRoot, inputResize, rootsResize);
+    setupEvaluateSection(centralWidget, mainLayout, inputEvaluateRe, inputEvaluateIm, evaluate, evaluateOutput);
+    setupPolynomSection(centralWidget, mainLayout, polynomFirstForm, polynomSecondForm);
+    connectSignals(changeAn, addRoot, changeRoot, rootsResize, evaluate);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-    delete nameRe;
-    delete inputRe;
-    delete nameIm;
-    delete inputIm;
-    delete createCoef;
-    delete changeCoefButton;
-    delete changeCoefIndex;
-    delete nameAnRe;
-    delete inputAnRe;
-    delete nameAnIm;
-    delete inputAnIm;
-    delete createAn;
-    delete nameEvaluateRe;
-    delete inputEvaluateRe;
-    delete nameEvaluateIm;
-    delete inputEvaluateIm;
-    delete evaluateButton;
-    delete nameResize;
-    delete inputResize;
-    delete resizeButton;
-    delete showPolynomClassic;
-    delete showPolynomCanon;
-    delete output;
 }
 
-void MainWindow::setRoot() {
-    QString str("Добавлен корень");
-    number num(inputRe->text().toDouble(), inputIm->text().toDouble());
-    polynom.addRoot(num);
-    output->setText(str);
+void MainWindow::setupAnSection(QWidget* parent, QVBoxLayout* parentLayout, QLineEdit*& inputAnRe, QLineEdit*& inputAnIm, QPushButton*& changeAn)
+{
+    QDoubleValidator *doubleValidator = new QDoubleValidator(parent);
+    doubleValidator->setNotation(QDoubleValidator::StandardNotation);
+
+    QGroupBox* addAnBox = new QGroupBox("Изменить An", parent);
+    QHBoxLayout* addAnBoxLayout = new QHBoxLayout(addAnBox);
+
+    addAnBox->setStyleSheet("QGroupBox, QLabel, QLineEdit, QPushButton { background-color: white; }");
+
+    addAnBoxLayout->addWidget(new QLabel("Корень: "));
+    inputAnRe = new QLineEdit("0");
+    inputAnRe->setValidator(doubleValidator);
+    addAnBoxLayout->addWidget(inputAnRe);
+    addAnBoxLayout->addWidget(new QLabel(" + "));
+    inputAnIm = new QLineEdit("0");
+    inputAnIm->setValidator(doubleValidator);
+    addAnBoxLayout->addWidget(inputAnIm);
+    addAnBoxLayout->addWidget(new QLabel("i"));
+    changeAn = new QPushButton("Изменить An");
+    addAnBoxLayout->addWidget(changeAn);
+
+    addAnBox->setLayout(addAnBoxLayout);
+    parentLayout->addWidget(addAnBox);
+    /*
+    layout->addWidget(new QLabel("Ввод как в консоле"));
+
+    QPlainTextEdit *inputAnAndRoots = new QPlainTextEdit(this);
+    inputAnAndRoots->setPlainText("Введите An и корни через пробел...");
+    layout->addWidget(inputAnAndRoots);
+    */
 }
 
-void MainWindow::setAn() {
-    QString str("Назначен An");
-    number An(inputAnRe->text().toDouble(), inputAnIm->text().toDouble());
-    polynom.setAn(An);
-    output->setText(str);
+void MainWindow::setupRootSection(QWidget* parent, QVBoxLayout* parentLayout,
+                   QLineEdit*& inputRootRe, QLineEdit*& inputRootIm, QPushButton*& addRoot,
+                   QLineEdit*& inputIndex, QPushButton*& changeRoot,
+                   QLineEdit*& inputResize, QPushButton*& rootsResize) {
+
+    QDoubleValidator *doubleValidator = new QDoubleValidator(parent);
+    doubleValidator->setNotation(QDoubleValidator::StandardNotation);
+
+    QGroupBox *rootBox = new QGroupBox("Операции с корнями", parent);
+    QVBoxLayout *rootBoxLayout = new QVBoxLayout(rootBox);
+
+    rootBox->setStyleSheet("QWidget, QLabel, QLineEdit, QPushButton { "
+                           "background-color: #f0cd4e;"
+                           "margin-top: 1ex;"
+                           "QWidget#SpecificWidget {border: 2px solid #FA9300;} "
+                           "QWidget::title { background-color: #f1e0a0 } ");
+
+    QWidget *addRootBox = new QWidget(rootBox);
+    QHBoxLayout *addRootBoxLayout = new QHBoxLayout(addRootBox);
+
+    addRootBoxLayout->addWidget(new QLabel("Корень: "));
+    inputRootRe = new QLineEdit("0");
+    inputRootRe->setValidator(doubleValidator);
+    addRootBoxLayout->addWidget(inputRootRe);
+    addRootBoxLayout->addWidget(new QLabel(" + "));
+    inputRootIm = new QLineEdit("0");
+    inputRootIm->setValidator(doubleValidator);
+    addRootBoxLayout->addWidget(inputRootIm);
+    addRootBoxLayout->addWidget(new QLabel("i"));
+    addRoot = new QPushButton("Добавить корень");
+    addRootBoxLayout->addWidget(addRoot);
+
+    addRootBox->setLayout(addRootBoxLayout);
+    rootBoxLayout->addWidget(addRootBox);
+
+    QWidget *changeRootBox = new QWidget(rootBox);
+    QHBoxLayout *changeRootBoxLayout = new QHBoxLayout(changeRootBox);
+
+    QIntValidator *intValidator = new QIntValidator(parent);
+
+    changeRootBoxLayout->addWidget(new QLabel("Индекс: "));
+    inputIndex = new QLineEdit("0");
+    inputIndex->setValidator(intValidator);
+    changeRootBoxLayout->addWidget(inputIndex);
+    changeRoot = new QPushButton("Изменить корень");
+    changeRootBoxLayout->addWidget(changeRoot);
+
+    changeRootBox->setLayout(changeRootBoxLayout);
+    rootBoxLayout->addWidget(changeRootBox);
+
+    QWidget *changeRootsSizeBox = new QWidget(rootBox);
+    QHBoxLayout *changeRootsSizeBoxLayout = new QHBoxLayout(changeRootsSizeBox);
+
+    changeRootsSizeBoxLayout->addWidget(new QLabel("Размер массива корней: "));
+    inputResize = new QLineEdit("0");
+    inputResize->setValidator(intValidator);
+    changeRootsSizeBoxLayout->addWidget(inputResize);
+    rootsResize = new QPushButton("Изменить размер");
+    changeRootsSizeBoxLayout->addWidget(rootsResize);
+
+    changeRootsSizeBox->setLayout(changeRootsSizeBoxLayout);
+    rootBoxLayout->addWidget(changeRootsSizeBox);
+
+    parentLayout->addWidget(rootBox);
 }
 
-void MainWindow::printPolynomClassic() {
+void MainWindow::setupEvaluateSection(QWidget* parent, QVBoxLayout* parentLayout,
+                                      QLineEdit*& inputEvaluateRe, QLineEdit*& inputEvaluateIm,
+                                      QPushButton*& evaluate, QLabel*& evaluateOutput)
+{
+    QDoubleValidator *doubleValidator = new QDoubleValidator(parent);
+    doubleValidator->setNotation(QDoubleValidator::StandardNotation);
+
+    QGroupBox *evaluateBox = new QGroupBox("Вычислить в точке", parent);
+    QVBoxLayout *evaluateBoxLayout = new QVBoxLayout(evaluateBox);
+
+    // Блок ввода значений для вычисления
+    QWidget *evaluateInputBox = new QWidget(evaluateBox);
+    QHBoxLayout *evaluateInputBoxLayout = new QHBoxLayout(evaluateInputBox);
+
+    evaluateInputBoxLayout->addWidget(new QLabel("Значение: "));
+    inputEvaluateRe = new QLineEdit("0");
+    inputEvaluateRe->setValidator(doubleValidator);
+    evaluateInputBoxLayout->addWidget(inputEvaluateRe);
+    evaluateInputBoxLayout->addWidget(new QLabel(" + "));
+    inputEvaluateIm = new QLineEdit("0");
+    inputEvaluateIm->setValidator(doubleValidator);
+    evaluateInputBoxLayout->addWidget(inputEvaluateIm);
+    evaluateInputBoxLayout->addWidget(new QLabel("i"));
+    evaluate = new QPushButton("Вычислить");
+    evaluateInputBoxLayout->addWidget(evaluate);
+
+    evaluateInputBox->setLayout(evaluateInputBoxLayout);
+    evaluateBoxLayout->addWidget(evaluateInputBox);
+
+    // Блок вывода результата
+    QWidget *evaluateOutputBox = new QWidget(evaluateBox);
+    QHBoxLayout *evaluateOutputBoxLayout = new QHBoxLayout(evaluateOutputBox);
+
+    evaluateOutput = new QLabel("Результат: p(0) = 0");
+    evaluateOutputBoxLayout->addWidget(evaluateOutput);
+
+    evaluateOutputBox->setLayout(evaluateOutputBoxLayout);
+    evaluateBoxLayout->addWidget(evaluateOutputBox);
+
+    // Добавление evaluateBox в основной layout
+    parentLayout->addWidget(evaluateBox);
+}
+
+void MainWindow::setupPolynomSection(QWidget* parent, QVBoxLayout* parentLayout,
+                                     QLabel*& polynomFirstForm, QLabel*& polynomSecondForm)
+{
+    QGroupBox *polynomBox = new QGroupBox("Полином в двух формах", parent);
+    QVBoxLayout *polynomBoxLayout = new QVBoxLayout(polynomBox);
+
+    // Первая форма полинома
+    QWidget *polynomFirstBox = new QWidget(polynomBox);
+    QHBoxLayout *polynomFirstBoxLayout = new QHBoxLayout(polynomFirstBox);
+
+    polynomFirstForm = new QLabel("Значение: p(x) = 0");
+    polynomFirstForm->setWordWrap(true);
+    polynomFirstBoxLayout->addWidget(polynomFirstForm);
+
+    polynomFirstBox->setLayout(polynomFirstBoxLayout);
+    polynomBoxLayout->addWidget(polynomFirstBox);
+
+    // Вторая форма полинома
+    QWidget *polynomSecondBox = new QWidget(polynomBox);
+    QHBoxLayout *polynomSecondBoxLayout = new QHBoxLayout(polynomSecondBox);
+
+    polynomSecondForm = new QLabel("Значение: p(x) = 0");
+    polynomSecondForm->setWordWrap(true);
+    polynomSecondBoxLayout->addWidget(polynomSecondForm);
+
+    polynomSecondBox->setLayout(polynomSecondBoxLayout);
+    polynomBoxLayout->addWidget(polynomSecondBox);
+
+    // Добавление polynomBox в основной layout
+    parentLayout->addWidget(polynomBox);
+}
+
+void MainWindow::connectSignals(QPushButton* changeAn, QPushButton* addRoot,
+                                QPushButton* changeRoot, QPushButton* rootsResize,
+                                QPushButton* evaluate) {
+    connect(changeAn, &QPushButton::clicked, this, &MainWindow::onChangeAnClicked);
+    connect(addRoot, &QPushButton::clicked, this, &MainWindow::onAddRootClicked);
+    connect(changeRoot, &QPushButton::clicked, this, &MainWindow::onChangeRootClicked);
+    connect(rootsResize, &QPushButton::clicked, this, &MainWindow::onRootsResizeClicked);
+    connect(evaluate, &QPushButton::clicked, this, &MainWindow::onEvaluateClicked);
+}
+
+void MainWindow::onChangeAnClicked() {
+    //QString str("Назначен An");
+    polynom.setAn(number(inputAnRe->text().toDouble(), inputAnIm->text().toDouble()));
+    showPolynomClassic();
+    showPolynomCanon();
+    //output->setText(str);
+}
+
+void MainWindow::onAddRootClicked() {
+    //QString str("Добавлен корень");
+    polynom.addRoot(number(inputRootRe->text().toDouble(), inputRootIm->text().toDouble()));
+    showPolynomClassic();
+    showPolynomCanon();
+    //output->setText(str);
+}
+
+void MainWindow::onChangeRootClicked() {
+    //QString str("");
+    //number newRoot(inputRootRe->text().toDouble(), inputRootIm->text().toDouble());
+    if (inputIndex->text().toInt() >= 0 && inputIndex->text().toInt() < polynom.getRoots().getSize()) {
+        polynom.setRoot(inputIndex->text().toInt(), number(inputRootRe->text().toDouble(), inputRootIm->text().toDouble()));
+        showPolynomClassic();
+        showPolynomCanon();
+        //str+="Корень изменен";
+        //output->setText(str);
+    }
+    else {
+        //str+="Индекса под таким корнем нет!";
+        //output->setText(str);
+    }
+}
+
+void MainWindow::onRootsResizeClicked() {
+    //QString str("Размерность массива изменена");
+
+    polynom.resize(inputResize->text().toInt());
+    showPolynomClassic();
+    showPolynomCanon();
+    //output->setText(str);
+}
+
+void MainWindow::onEvaluateClicked() {
+    QString res = "Результат: p(";
+    if (inputEvaluateRe->text().toDouble() != 0 || inputEvaluateIm->text().toDouble() != 0) {
+        if (inputEvaluateRe->text().toDouble() != 0) {
+            res += QString().setNum(inputEvaluateRe->text().toDouble());
+        }
+        if (inputEvaluateIm->text().toDouble() != 0) {
+            if (inputEvaluateIm->text().toDouble() > 0 && inputEvaluateRe->text().toDouble() != 0) res += "+";
+            res += QString().setNum(inputEvaluateIm->text().toDouble()) + "i";
+        }
+    }
+    else {
+        res += QString().setNum(inputEvaluateRe->text().toDouble());
+    }
+    res += ") = ";
+    if (polynom.evaluate(number(inputEvaluateRe->text().toDouble(), inputEvaluateIm->text().toDouble())).getRe() != 0 || polynom.evaluate(number(inputEvaluateRe->text().toDouble(), inputEvaluateIm->text().toDouble())).getIm() != 0) {
+        if (polynom.evaluate(number(inputEvaluateRe->text().toDouble(), inputEvaluateIm->text().toDouble())).getRe() != 0) {
+            res += QString().setNum(polynom.evaluate(number(inputEvaluateRe->text().toDouble(), inputEvaluateIm->text().toDouble())).getRe());
+        }
+        if (polynom.evaluate(number(inputEvaluateRe->text().toDouble(), inputEvaluateIm->text().toDouble())).getIm() != 0) {
+            if (polynom.evaluate(number(inputEvaluateRe->text().toDouble(), inputEvaluateIm->text().toDouble())).getIm() > 0) res += "+";
+            res += QString().setNum(polynom.evaluate(number(inputEvaluateRe->text().toDouble(), inputEvaluateIm->text().toDouble())).getIm()) + "i";
+        }
+    }
+    else {
+        res += "0";
+    }
+
+    evaluateOutput->setText(res);
+    //output->setText(str);
+}
+
+void MainWindow::showPolynomClassic() {
     QString str("p(x) = ");
     bool firstTerm = true;
     bool needMinus = false;
-    for (size_t i = polynom.getCoefs().getSize(); i-- > 0;) {
-        if (polynom.getCoefs()[i].getRe() != 0 || polynom.getCoefs()[i].getIm() != 0) {
+    for (size_t i = polynom.getCoefs().getSize(); i-- > 0.0;) {
+        if (polynom.getCoefs()[i].getRe() != 0.0 || polynom.getCoefs()[i].getIm() != 0.0) {
             double re = polynom.getCoefs()[i].getRe();
             double im = polynom.getCoefs()[i].getIm();
 
             if (!firstTerm) {
-                needMinus = (re < 0 || (re == 0 && im < 0));
+                needMinus = (re < 0.0 || (re == 0.0 && im < 0.0));
                 str+= needMinus ? " - " : " + ";
             }
             else {
                 firstTerm = false;
             }
 
-            if (im == 0) {
-                if (re != 0) {
+            if (im == 0.0) {
+                if (re != 0.0) {
                     str+=QString().setNum(std::abs(re));
                 }
             }
             else {
                 str+="(";
 
-                if (re != 0) {
+                if (re != 0.0) {
                     str+=QString().setNum(std::abs(re));
                 }
-                // 1 im > 0 0 +
-                // 1 im > 0 1 -
-                // 0 im < 0 0 -
-                // 0 im < 0 1 +
-                str+=((im > 0)^(needMinus) ? " + " : " - ");
+                // 1 im > 0.0 0.0 +
+                // 1 im > 0.0 1 -
+                // 0.0 im < 0.0 0.0 -
+                // 0.0 im < 0.0 1 +
+                str+=((im > 0.0)^(needMinus) ? " + " : " - ");
                 str+=QString().setNum(std::abs(im));
                 str+="i";
 
@@ -173,7 +329,7 @@ void MainWindow::printPolynomClassic() {
             }
 
 
-            if (i > 0) {
+            if (i > 0.0) {
                 str+="x";
                 if (i > 1) {
                     str+="^";
@@ -186,37 +342,38 @@ void MainWindow::printPolynomClassic() {
     if (firstTerm) {
         str+="0";
     }
-    output->setText(str);
+    polynomFirstForm->setText(str);
 
 }
-//str+=QString().setNum(std::abs(reRoot));
-void MainWindow::printPolynomCanon() {
+
+void MainWindow::showPolynomCanon() {
     QString str("p(x) = ");
 
-    if (polynom.getAn().getRe() != 0 || polynom.getAn().getIm() != 0) {
-        if (polynom.getAn().getIm() == 0) {
+    if (polynom.getAn().getRe() != 0.0 || polynom.getAn().getIm() != 0.0) {
+        if (polynom.getAn().getIm() == 0.0) {
             str += QString().setNum(std::abs(polynom.getAn().getRe()));
         }
         else {
             str += "(";
-            if (polynom.getAn().getRe() != 0) {
+            if (polynom.getAn().getRe() != 0.0) {
+                std::cout << polynom.getAn().getRe();
                 str += QString().setNum(std::abs(polynom.getAn().getRe()));
             }
-            str += ((polynom.getAn().getIm() > 0) ? " + " : " - ") + QString().setNum(std::abs(polynom.getAn().getIm())) + "i)";
+            str += ((polynom.getAn().getIm() > 0.0) ? " + " : " - ") + QString().setNum(std::abs(polynom.getAn().getIm())) + "i)";
         }
 
-        if (polynom.getRoots().getSize() != 0) {
-            for (size_t i = 0; i < polynom.getRoots().getSize(); ++i) {
+        if (polynom.getRoots().getSize() != 0.0) {
+            for (size_t i = 0.0; i < polynom.getRoots().getSize(); ++i) {
                 str += "(x";
                 double re = polynom.getRoots()[i].getRe();
                 double im = polynom.getRoots()[i].getIm();
 
-                if (re != 0) {
-                    str += (re > 0 ? " - " : " + ") +  QString().setNum(std::abs(re));
+                if (re != 0.0) {
+                    str += (re > 0.0 ? " - " : " + ") +  QString().setNum(std::abs(re));
                 }
 
-                if (im != 0) {
-                    str += (im > 0 ? " - " : " + ") + QString().setNum(std::abs(im)) + "i";
+                if (im != 0.0) {
+                    str += (im > 0.0 ? " - " : " + ") + QString().setNum(std::abs(im)) + "i";
                 }
                 str += ")";
             }
@@ -226,42 +383,5 @@ void MainWindow::printPolynomCanon() {
     else {
         str += "0";
     }
-    output->setText(str);
-}
-
-void MainWindow::changeCoef() {
-    QString str("");
-    number newRoot(inputRe->text().toDouble(), inputIm->text().toDouble());
-    if (changeCoefIndex->text().toInt()<polynom.getCoefs().getSize()) {
-        polynom.setRoot(changeCoefIndex->text().toInt(), newRoot);
-        str+="Корень изменен";
-        output->setText(str);
-    }
-    else {
-        str+="Индекса под таким корнем нет!";
-        output->setText(str);
-    }
-}
-
-void MainWindow::evaluateSlot() {
-    QString str("");
-    number evaluateRoot(inputEvaluateRe->text().toDouble(), inputEvaluateIm->text().toDouble());
-    str+="p(";
-    str+=QString().setNum(inputEvaluateRe->text().toDouble());
-    if (inputEvaluateRe->text().toDouble()>=0) str +="+";
-    str+=QString().setNum(inputEvaluateIm->text().toDouble());
-    str+="i)=";
-    str+=QString().setNum(polynom.evaluate(evaluateRoot).getRe());
-    if (polynom.evaluate(evaluateRoot).getIm()>=0) str +="+";
-    str+=QString().setNum(polynom.evaluate(evaluateRoot).getIm());
-    str+="i";
-    output->setText(str);
-}
-
-void MainWindow::resizeSlot() {
-    QString str("Размерность массива изменена");
-
-    polynom.resize(inputResize->text().toInt());
-
-    output->setText(str);
+    polynomSecondForm->setText(str);
 }
