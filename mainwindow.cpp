@@ -1,29 +1,56 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(Polynom& otherPolynom, QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , polynom(otherPolynom)
 {
     setWindowTitle("Polynomial");
     setMinimumSize(400, 300);
-
+    resize(600, 600);
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     QWidget *centralWidget = new QWidget(this);
     setCentralWidget(centralWidget);
     QVBoxLayout *mainLayout = new QVBoxLayout(centralWidget);
-    centralWidget->setStyleSheet("QWidget { background-color: #b5b5b5; }");
+    centralWidget->setObjectName("centralWidget");
+    centralWidget->setStyleSheet("#centralWidget {"
+                                 "   background-color: #e5e5e5;"
+                                 "}"
+                                 "#centralWidget * {"
+                                 "   background-color: #FAF8BD;"
+                                 "   font-family: 'Comic Sans MS'; font-size: 11pt;"
+                                 "}"
+                                 "#centralWidget QGroupBox {"
+                                 "   background-color: #FAF8BD;"
+                                 "   border: 2px solid black;"
+                                 "   border-radius: 10px;"
+                                 "   margin-top: 15px;"
+                                 "}"
+                                 "#centralWidget QGroupBox::title {"
+                                 "   color: black;"
+                                 "   background-color: #FA9B52;"
+                                 "   padding: 1px;"
+                                 "   border: 1px solid black;"
+                                 "   border-radius: 5px;"
+                                 "   subcontrol-origin: margin;"
+                                 "   subcontrol-position: top left;"
+                                 "   margin-left: 10px;"
+                                 "   margin-top: 1px;"
+                                 "}"
+                                 "#centralWidget QPushButton {"
+                                 "   background-color: #9AFAC9;"
+                                 "   color: black;"
+                                 "   border: 1px solid black;"
+                                 "   border-radius: 5px;"
+                                 "   padding: 3px;"
+                                 "}");
 
-
-    /*
-    QPlainTextEdit *inputAnAndRoots = new QPlainTextEdit(centralWidget);
-    inputAnAndRoots->setPlainText("Введите An и корни через пробел...");
-    mainLayout->addWidget(new QLabel("Ввод как в консоле"));
-    mainLayout->addWidget(inputAnAndRoots);
-    */
     setupAnSection(centralWidget, mainLayout, inputAnRe, inputAnIm, changeAn);
     setupRootSection(centralWidget, mainLayout, inputRootRe, inputRootIm, addRoot, inputIndex, changeRoot, inputResize, rootsResize);
     setupEvaluateSection(centralWidget, mainLayout, inputEvaluateRe, inputEvaluateIm, evaluate, evaluateOutput);
     setupPolynomSection(centralWidget, mainLayout, polynomFirstForm, polynomSecondForm);
+    setupLastActionSection(centralWidget, mainLayout, lastAction);
     connectSignals(changeAn, addRoot, changeRoot, rootsResize, evaluate);
 }
 
@@ -40,8 +67,6 @@ void MainWindow::setupAnSection(QWidget* parent, QVBoxLayout* parentLayout, QLin
     QGroupBox* addAnBox = new QGroupBox("Изменить An", parent);
     QHBoxLayout* addAnBoxLayout = new QHBoxLayout(addAnBox);
 
-    addAnBox->setStyleSheet("QGroupBox, QLabel, QLineEdit, QPushButton { background-color: white; }");
-
     addAnBoxLayout->addWidget(new QLabel("Корень: "));
     inputAnRe = new QLineEdit("0");
     inputAnRe->setValidator(doubleValidator);
@@ -56,13 +81,6 @@ void MainWindow::setupAnSection(QWidget* parent, QVBoxLayout* parentLayout, QLin
 
     addAnBox->setLayout(addAnBoxLayout);
     parentLayout->addWidget(addAnBox);
-    /*
-    layout->addWidget(new QLabel("Ввод как в консоле"));
-
-    QPlainTextEdit *inputAnAndRoots = new QPlainTextEdit(this);
-    inputAnAndRoots->setPlainText("Введите An и корни через пробел...");
-    layout->addWidget(inputAnAndRoots);
-    */
 }
 
 void MainWindow::setupRootSection(QWidget* parent, QVBoxLayout* parentLayout,
@@ -75,12 +93,6 @@ void MainWindow::setupRootSection(QWidget* parent, QVBoxLayout* parentLayout,
 
     QGroupBox *rootBox = new QGroupBox("Операции с корнями", parent);
     QVBoxLayout *rootBoxLayout = new QVBoxLayout(rootBox);
-
-    rootBox->setStyleSheet("QWidget, QLabel, QLineEdit, QPushButton { "
-                           "background-color: #f0cd4e;"
-                           "margin-top: 1ex;"
-                           "QWidget#SpecificWidget {border: 2px solid #FA9300;} "
-                           "QWidget::title { background-color: #f1e0a0 } ");
 
     QWidget *addRootBox = new QWidget(rootBox);
     QHBoxLayout *addRootBoxLayout = new QHBoxLayout(addRootBox);
@@ -103,7 +115,7 @@ void MainWindow::setupRootSection(QWidget* parent, QVBoxLayout* parentLayout,
     QWidget *changeRootBox = new QWidget(rootBox);
     QHBoxLayout *changeRootBoxLayout = new QHBoxLayout(changeRootBox);
 
-    QIntValidator *intValidator = new QIntValidator(parent);
+    QIntValidator *intValidator = new QIntValidator(0, 999999999, parent);
 
     changeRootBoxLayout->addWidget(new QLabel("Индекс: "));
     inputIndex = new QLineEdit("0");
@@ -141,7 +153,6 @@ void MainWindow::setupEvaluateSection(QWidget* parent, QVBoxLayout* parentLayout
     QGroupBox *evaluateBox = new QGroupBox("Вычислить в точке", parent);
     QVBoxLayout *evaluateBoxLayout = new QVBoxLayout(evaluateBox);
 
-    // Блок ввода значений для вычисления
     QWidget *evaluateInputBox = new QWidget(evaluateBox);
     QHBoxLayout *evaluateInputBoxLayout = new QHBoxLayout(evaluateInputBox);
 
@@ -160,7 +171,6 @@ void MainWindow::setupEvaluateSection(QWidget* parent, QVBoxLayout* parentLayout
     evaluateInputBox->setLayout(evaluateInputBoxLayout);
     evaluateBoxLayout->addWidget(evaluateInputBox);
 
-    // Блок вывода результата
     QWidget *evaluateOutputBox = new QWidget(evaluateBox);
     QHBoxLayout *evaluateOutputBoxLayout = new QHBoxLayout(evaluateOutputBox);
 
@@ -170,7 +180,6 @@ void MainWindow::setupEvaluateSection(QWidget* parent, QVBoxLayout* parentLayout
     evaluateOutputBox->setLayout(evaluateOutputBoxLayout);
     evaluateBoxLayout->addWidget(evaluateOutputBox);
 
-    // Добавление evaluateBox в основной layout
     parentLayout->addWidget(evaluateBox);
 }
 
@@ -180,30 +189,46 @@ void MainWindow::setupPolynomSection(QWidget* parent, QVBoxLayout* parentLayout,
     QGroupBox *polynomBox = new QGroupBox("Полином в двух формах", parent);
     QVBoxLayout *polynomBoxLayout = new QVBoxLayout(polynomBox);
 
-    // Первая форма полинома
     QWidget *polynomFirstBox = new QWidget(polynomBox);
     QHBoxLayout *polynomFirstBoxLayout = new QHBoxLayout(polynomFirstBox);
 
-    polynomFirstForm = new QLabel("Значение: p(x) = 0");
+    polynomFirstForm = new QLabel("p(x) = 0");
     polynomFirstForm->setWordWrap(true);
     polynomFirstBoxLayout->addWidget(polynomFirstForm);
 
     polynomFirstBox->setLayout(polynomFirstBoxLayout);
     polynomBoxLayout->addWidget(polynomFirstBox);
 
-    // Вторая форма полинома
     QWidget *polynomSecondBox = new QWidget(polynomBox);
     QHBoxLayout *polynomSecondBoxLayout = new QHBoxLayout(polynomSecondBox);
 
-    polynomSecondForm = new QLabel("Значение: p(x) = 0");
+    polynomSecondForm = new QLabel("p(x) = 0");
     polynomSecondForm->setWordWrap(true);
     polynomSecondBoxLayout->addWidget(polynomSecondForm);
 
     polynomSecondBox->setLayout(polynomSecondBoxLayout);
     polynomBoxLayout->addWidget(polynomSecondBox);
 
-    // Добавление polynomBox в основной layout
     parentLayout->addWidget(polynomBox);
+}
+
+void MainWindow::setupLastActionSection(QWidget* parent, QVBoxLayout* parentLayout, QLabel*& lastAction)
+{
+    lastAction = new QLabel("Действий не было", parent);
+    lastAction->setObjectName("lastAction");
+    lastAction->setStyleSheet("#lastAction {"
+                              "   background-color: #FA5D51;"
+                              "   border: 2px solid black;"
+                              "   border-radius: 15px;"
+                              "   padding: 5px;"
+                              "   margin-top: 15px;"
+                              "   font-size: 16px;"
+                              "   font-weight: bold;"
+                              "   text-align: center;"
+                              "   color: white;"
+                              "   qproperty-alignment: AlignCenter;"
+                              "}");
+    parentLayout->addWidget(lastAction);
 }
 
 void MainWindow::connectSignals(QPushButton* changeAn, QPushButton* addRoot,
@@ -216,48 +241,42 @@ void MainWindow::connectSignals(QPushButton* changeAn, QPushButton* addRoot,
     connect(evaluate, &QPushButton::clicked, this, &MainWindow::onEvaluateClicked);
 }
 
-void MainWindow::onChangeAnClicked() {
-    //QString str("Назначен An");
+void MainWindow::onChangeAnClicked()
+{
     polynom.setAn(number(inputAnRe->text().toDouble(), inputAnIm->text().toDouble()));
     showPolynomClassic();
     showPolynomCanon();
-    //output->setText(str);
+    lastAction->setText("Последнее действие: Изменение An");
 }
 
-void MainWindow::onAddRootClicked() {
-    //QString str("Добавлен корень");
+void MainWindow::onAddRootClicked()
+{
     polynom.addRoot(number(inputRootRe->text().toDouble(), inputRootIm->text().toDouble()));
     showPolynomClassic();
     showPolynomCanon();
-    //output->setText(str);
+    lastAction->setText("Последнее действие: Добавление корня");
 }
 
-void MainWindow::onChangeRootClicked() {
-    //QString str("");
-    //number newRoot(inputRootRe->text().toDouble(), inputRootIm->text().toDouble());
+void MainWindow::onChangeRootClicked()
+{
     if (inputIndex->text().toInt() >= 0 && inputIndex->text().toInt() < polynom.getRoots().getSize()) {
         polynom.setRoot(inputIndex->text().toInt(), number(inputRootRe->text().toDouble(), inputRootIm->text().toDouble()));
         showPolynomClassic();
         showPolynomCanon();
-        //str+="Корень изменен";
-        //output->setText(str);
-    }
-    else {
-        //str+="Индекса под таким корнем нет!";
-        //output->setText(str);
+        lastAction->setText("Последнее действие: Изменение корня");
     }
 }
 
-void MainWindow::onRootsResizeClicked() {
-    //QString str("Размерность массива изменена");
-
+void MainWindow::onRootsResizeClicked()
+{
     polynom.resize(inputResize->text().toInt());
     showPolynomClassic();
     showPolynomCanon();
-    //output->setText(str);
+    lastAction->setText("Последнее действие: Изменение размера массива корней");
 }
 
-void MainWindow::onEvaluateClicked() {
+void MainWindow::onEvaluateClicked()
+{
     QString res = "Результат: p(";
     if (inputEvaluateRe->text().toDouble() != 0 || inputEvaluateIm->text().toDouble() != 0) {
         if (inputEvaluateRe->text().toDouble() != 0) {
@@ -286,7 +305,7 @@ void MainWindow::onEvaluateClicked() {
     }
 
     evaluateOutput->setText(res);
-    //output->setText(str);
+    lastAction->setText("Последнее действие: Вычисление в точке");
 }
 
 void MainWindow::showPolynomClassic() {
@@ -317,15 +336,9 @@ void MainWindow::showPolynomClassic() {
                 if (re != 0.0) {
                     str+=QString().setNum(std::abs(re));
                 }
-                // 1 im > 0.0 0.0 +
-                // 1 im > 0.0 1 -
-                // 0.0 im < 0.0 0.0 -
-                // 0.0 im < 0.0 1 +
                 str+=((im > 0.0)^(needMinus) ? " + " : " - ");
                 str+=QString().setNum(std::abs(im));
-                str+="i";
-
-                str+=")";
+                str+="i)";
             }
 
 

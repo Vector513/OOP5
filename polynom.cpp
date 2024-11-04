@@ -91,7 +91,7 @@ number Polynom::evaluate(const number& x) const {
     return result;
 }
 
-void Polynom::resize(const int newSize) {
+void Polynom::resize(const size_t newSize) {
     roots.resize(newSize);
     coefs.resize(newSize);
     degree = roots.getSize();

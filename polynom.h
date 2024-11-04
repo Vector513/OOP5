@@ -29,7 +29,7 @@ public:
     const Array& getCoefs() const;
     number evaluate(const number& x) const;
 
-    void resize(const int newSize);
+    void resize(const size_t newSize);
 
     void show(std::ostream& output, bool isFirstForm = true) const;
 };

@@ -6,6 +6,7 @@
 
 int main(int argc, char *argv[])
 {
+    Polynom polynom;
     QApplication a(argc, argv);
     QLocale::setDefault(QLocale(QLocale::English, QLocale::UnitedStates));
     QTranslator translator;
@@ -17,7 +18,7 @@ int main(int argc, char *argv[])
             break;
         }
     }
-    MainWindow w;
+    MainWindow w(polynom);
 
     w.show();
     return a.exec();
