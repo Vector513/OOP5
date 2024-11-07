@@ -1,14 +1,13 @@
 #include "mainwindow.h"
-#include "./ui_mainwindow.h"
 
-MainWindow::MainWindow(Polynom& otherPolynom, QWidget *parent)
+MainWindow::MainWindow(Polynom& otherPolynom, TcpClient& otherTcpClient, QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+    , tcpClient(otherTcpClient)
     , polynom(otherPolynom)
 {
     setWindowTitle("Polynomial");
     setMinimumSize(400, 300);
-    resize(600, 600);
+    //resize(700, 800);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     QWidget *centralWidget = new QWidget(this);
     setCentralWidget(centralWidget);
@@ -19,7 +18,7 @@ MainWindow::MainWindow(Polynom& otherPolynom, QWidget *parent)
                                  "}"
                                  "#centralWidget * {"
                                  "   background-color: #FAF8BD;"
-                                 "   font-family: 'Comic Sans MS'; font-size: 11pt;"
+                                 "   font-family: 'Courier new'; font-size: 11pt;"
                                  "}"
                                  "#centralWidget QGroupBox {"
                                  "   background-color: #FAF8BD;"
@@ -50,13 +49,14 @@ MainWindow::MainWindow(Polynom& otherPolynom, QWidget *parent)
     setupRootSection(centralWidget, mainLayout, inputRootRe, inputRootIm, addRoot, inputIndex, changeRoot, inputResize, rootsResize);
     setupEvaluateSection(centralWidget, mainLayout, inputEvaluateRe, inputEvaluateIm, evaluate, evaluateOutput);
     setupPolynomSection(centralWidget, mainLayout, polynomFirstForm, polynomSecondForm);
+    setupConnectToServerSection(centralWidget, mainLayout, inputAddress, inputPort, connectToServerButton);
     setupLastActionSection(centralWidget, mainLayout, lastAction);
-    connectSignals(changeAn, addRoot, changeRoot, rootsResize, evaluate);
+    connectSignals(changeAn, addRoot, changeRoot, rootsResize, evaluate, connectToServerButton);
 }
 
 MainWindow::~MainWindow()
 {
-    delete ui;
+    //delete ui;
 }
 
 void MainWindow::setupAnSection(QWidget* parent, QVBoxLayout* parentLayout, QLineEdit*& inputAnRe, QLineEdit*& inputAnIm, QPushButton*& changeAn)
@@ -139,7 +139,7 @@ void MainWindow::setupRootSection(QWidget* parent, QVBoxLayout* parentLayout,
 
     changeRootsSizeBox->setLayout(changeRootsSizeBoxLayout);
     rootBoxLayout->addWidget(changeRootsSizeBox);
-
+    rootBox->adjustSize();
     parentLayout->addWidget(rootBox);
 }
 
@@ -231,14 +231,41 @@ void MainWindow::setupLastActionSection(QWidget* parent, QVBoxLayout* parentLayo
     parentLayout->addWidget(lastAction);
 }
 
+void MainWindow::setupConnectToServerSection(QWidget* parent, QVBoxLayout* parentLayout, QLineEdit*& inputAddress, QLineEdit*& inputPort, QPushButton*& connectToServerButton)
+{
+    QGroupBox* connectToServerBox = new QGroupBox("Подключиться к серверу", parent);
+    QHBoxLayout* connectToServerBoxLayout = new QHBoxLayout(connectToServerBox);
+
+    connectToServerBoxLayout->addWidget(new QLabel("IP Адресс: "));
+    inputAddress = new QLineEdit("0");
+    connectToServerBoxLayout->addWidget(inputAddress);
+    connectToServerBoxLayout->addWidget(new QLabel("Порт: "));
+    inputPort = new QLineEdit("0");
+    connectToServerBoxLayout->addWidget(inputPort);
+
+    connectToServerBox->setLayout(connectToServerBoxLayout);
+    parentLayout->addWidget(connectToServerBox);
+
+    connectToServerButton = new QPushButton("Подключиться");
+    parentLayout->addWidget(connectToServerButton);
+
+    inputMessage = new QLineEdit("0");
+    parentLayout->addWidget(inputMessage);
+
+    sendButton = new QPushButton("Отправить");
+    parentLayout->addWidget(sendButton);
+}
+
 void MainWindow::connectSignals(QPushButton* changeAn, QPushButton* addRoot,
                                 QPushButton* changeRoot, QPushButton* rootsResize,
-                                QPushButton* evaluate) {
+                                QPushButton* evaluate, QPushButton* connectToServerButton) {
     connect(changeAn, &QPushButton::clicked, this, &MainWindow::onChangeAnClicked);
     connect(addRoot, &QPushButton::clicked, this, &MainWindow::onAddRootClicked);
     connect(changeRoot, &QPushButton::clicked, this, &MainWindow::onChangeRootClicked);
     connect(rootsResize, &QPushButton::clicked, this, &MainWindow::onRootsResizeClicked);
     connect(evaluate, &QPushButton::clicked, this, &MainWindow::onEvaluateClicked);
+    connect(connectToServerButton, &QPushButton::clicked, this, &MainWindow::onConnectToServerClicked);
+    connect(sendButton, &QPushButton::clicked, this, &MainWindow::onSendMessageClicked);
 }
 
 void MainWindow::onChangeAnClicked()
@@ -306,6 +333,18 @@ void MainWindow::onEvaluateClicked()
 
     evaluateOutput->setText(res);
     lastAction->setText("Последнее действие: Вычисление в точке");
+}
+
+void MainWindow::onConnectToServerClicked()
+{
+    tcpClient.connectToServer(inputAddress->text(), inputPort->text().toInt());
+    lastAction->setText("Последнее действие: Подключение к серверу");
+}
+
+void MainWindow::onSendMessageClicked()
+{
+    tcpClient.sendData(inputMessage->text());
+    lastAction->setText("Последнее действие: Отправка сообщения");
 }
 
 void MainWindow::showPolynomClassic() {

@@ -10,27 +10,25 @@
 #include <QPushButton>
 #include <QLabel>
 #include "polynom.h"
-
-QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
-QT_END_NAMESPACE
+#include "tcpClient.h"
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    MainWindow(Polynom& otherPolynom, QWidget *parent = nullptr);
+    MainWindow(Polynom& otherPolynom, TcpClient& otherTcpClient, QWidget *parent = nullptr);
     ~MainWindow();
 
 private:
-    Ui::MainWindow *ui;
+    //Ui::MainWindow *ui;
 
     Polynom& polynom;
+    TcpClient& tcpClient;
 
     QLabel *evaluateOutput, *polynomFirstForm, *polynomSecondForm, *lastAction;
-    QLineEdit *inputAnRe, *inputAnIm, *inputRootRe, *inputRootIm, *inputIndex, *inputResize, *inputEvaluateRe, *inputEvaluateIm;
-    QPushButton *changeAn, *addRoot, *changeRoot, *rootsResize, *evaluate;
+    QLineEdit *inputAnRe, *inputAnIm, *inputRootRe, *inputRootIm, *inputIndex, *inputResize, *inputEvaluateRe, *inputEvaluateIm, *inputAddress, *inputPort, *inputMessage;
+    QPushButton *changeAn, *addRoot, *changeRoot, *rootsResize, *evaluate, *connectToServerButton, *sendButton;
 
     void showPolynomClassic();
     void showPolynomCanon();
@@ -40,8 +38,9 @@ private:
     void setupEvaluateSection(QWidget* parent, QVBoxLayout* parentLayout, QLineEdit*& inputEvaluateRe, QLineEdit*& inputEvaluateIm, QPushButton*& evaluate, QLabel*& evaluateOutput);
     void setupPolynomSection(QWidget* parent, QVBoxLayout* parentLayout, QLabel*& polynomFirstForm, QLabel*& polynomSecondForm);
     void setupLastActionSection(QWidget* parent, QVBoxLayout* parentLayout, QLabel*& lastAction);
+    void setupConnectToServerSection(QWidget* parent, QVBoxLayout* parentLayout, QLineEdit*& inputAddress, QLineEdit*& inputPort, QPushButton*& connectToServerButton);
 
-    void connectSignals(QPushButton* changeAn, QPushButton* addRoot, QPushButton* changeRoot, QPushButton* rootsResize, QPushButton* evaluate);
+    void connectSignals(QPushButton* changeAn, QPushButton* addRoot, QPushButton* changeRoot, QPushButton* rootsResize, QPushButton* evaluate, QPushButton* connectToServerButton);
 
 private slots:
     void onChangeAnClicked();
@@ -49,6 +48,8 @@ private slots:
     void onChangeRootClicked();
     void onRootsResizeClicked();
     void onEvaluateClicked();
+    void onConnectToServerClicked();
+    void onSendMessageClicked();
 };
 
 #endif // MAINWINDOW_H
