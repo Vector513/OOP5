@@ -9,13 +9,31 @@ MainWindow::MainWindow(TcpClient* otherTcpClient, QWidget *parent)
 {
     setWindowTitle("Polynomial");
     setMinimumSize(400, 300);
-    //resize(700, 800);
-    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    resize(600, 700);
     QWidget *centralWidget = new QWidget(this);
     setCentralWidget(centralWidget);
     QVBoxLayout *mainLayout = new QVBoxLayout(centralWidget);
     centralWidget->setObjectName("centralWidget");
-    centralWidget->setStyleSheet("#centralWidget {"
+
+    applyStyles();
+
+    setupAnSection(centralWidget, mainLayout, inputAnRe, inputAnIm, changeAn);
+    setupRootSection(centralWidget, mainLayout, inputRootRe, inputRootIm, addRoot, inputIndex, changeRoot, inputResize, rootsResize);
+    setupEvaluateSection(centralWidget, mainLayout, inputEvaluateRe, inputEvaluateIm, evaluate, evaluateOutput);
+    setupPolynomSection(centralWidget, mainLayout, polynomFirstForm, polynomSecondForm);
+    setupConnectToServerSection(centralWidget, mainLayout, inputAddress, inputPort, connectToServerButton);
+    setupLastActionSection(centralWidget, mainLayout, lastAction);
+    connectSignals(changeAn, addRoot, changeRoot, rootsResize, evaluate, connectToServerButton);
+}
+
+MainWindow::~MainWindow()
+{
+
+}
+
+void MainWindow::applyStyles()
+{
+    setStyleSheet("#centralWidget {"
                                  "   background-color: #e5e5e5;"
                                  "}"
                                  "#centralWidget * {"
@@ -46,20 +64,8 @@ MainWindow::MainWindow(TcpClient* otherTcpClient, QWidget *parent)
                                  "   border-radius: 5px;"
                                  "   padding: 3px;"
                                  "}");
-
-    setupAnSection(centralWidget, mainLayout, inputAnRe, inputAnIm, changeAn);
-    setupRootSection(centralWidget, mainLayout, inputRootRe, inputRootIm, addRoot, inputIndex, changeRoot, inputResize, rootsResize);
-    setupEvaluateSection(centralWidget, mainLayout, inputEvaluateRe, inputEvaluateIm, evaluate, evaluateOutput);
-    setupPolynomSection(centralWidget, mainLayout, polynomFirstForm, polynomSecondForm);
-    setupConnectToServerSection(centralWidget, mainLayout, inputAddress, inputPort, connectToServerButton);
-    setupLastActionSection(centralWidget, mainLayout, lastAction);
-    connectSignals(changeAn, addRoot, changeRoot, rootsResize, evaluate, connectToServerButton);
 }
 
-MainWindow::~MainWindow()
-{
-    //delete ui;
-}
 
 void MainWindow::setupAnSection(QWidget* parent, QVBoxLayout* parentLayout, QLineEdit*& inputAnRe, QLineEdit*& inputAnIm, QPushButton*& changeAn)
 {
@@ -141,7 +147,6 @@ void MainWindow::setupRootSection(QWidget* parent, QVBoxLayout* parentLayout,
 
     changeRootsSizeBox->setLayout(changeRootsSizeBoxLayout);
     rootBoxLayout->addWidget(changeRootsSizeBox);
-    rootBox->adjustSize();
     parentLayout->addWidget(rootBox);
 }
 

@@ -10,11 +10,9 @@ TcpClient::TcpClient(QObject *parent)
     connect(socket, &QTcpSocket::errorOccurred, this, &TcpClient::onErrorOccurred);
 }
 
-// TcpClient.cpp
 bool TcpClient::isConnected() const {
     return socket->state() == QAbstractSocket::ConnectedState;
 }
-
 
 bool TcpClient::connectToServer(const QString &host, quint16 port)
 {
@@ -24,25 +22,22 @@ bool TcpClient::connectToServer(const QString &host, quint16 port)
     if (!socket->waitForConnected(5000)) {
         qCritical() << "Не удалось подключиться к серверу!" << socket->errorString();
         return  false;
-    }
-    else {
-        qDebug() << "Подключение к серверу закончено успешно!" << host << ":" << port;
+    } else {
+        qDebug() << "Подключение к серверу завершено успешно!" << host << ":" << port;
         return true;
     }
 }
-
 
 void TcpClient::disconnectFromServer()
 {
     socket->disconnectFromHost();
     if (socket->state() != QAbstractSocket::UnconnectedState && !socket->waitForDisconnected(3000)) {
         qWarning() << "Не удалось отключиться от сервера. Принудительное отключение.";
-        socket->abort(); // Принудительно закрывает соединение
+        socket->abort();
     } else {
         qDebug() << "Отключено от сервера.";
     }
 }
-
 
 void TcpClient::sendData(const QString &data)
 {
@@ -51,7 +46,6 @@ void TcpClient::sendData(const QString &data)
 
         socket->write(data.toUtf8());
 
-        // Синхронная отправка: ждем, пока все данные будут записаны
         if (!socket->waitForBytesWritten(5000)) {
             qWarning() << "Ошибка при отправке данных:" << socket->errorString();
         } else {
