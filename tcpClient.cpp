@@ -10,16 +10,24 @@ TcpClient::TcpClient(QObject *parent)
     connect(socket, &QTcpSocket::errorOccurred, this, &TcpClient::onErrorOccurred);
 }
 
-void TcpClient::connectToServer(const QString &host, quint16 port)
+// TcpClient.cpp
+bool TcpClient::isConnected() const {
+    return socket->state() == QAbstractSocket::ConnectedState;
+}
+
+
+bool TcpClient::connectToServer(const QString &host, quint16 port)
 {
     qDebug() << "Подключение к серверу:" << host << port;
     socket->connectToHost(host, port);
 
     if (!socket->waitForConnected(5000)) {
         qCritical() << "Не удалось подключиться к серверу!" << socket->errorString();
+        return  false;
     }
     else {
         qDebug() << "Подключение к серверу закончено успешно!" << host << ":" << port;
+        return true;
     }
 }
 
@@ -27,12 +35,14 @@ void TcpClient::connectToServer(const QString &host, quint16 port)
 void TcpClient::disconnectFromServer()
 {
     socket->disconnectFromHost();
-    if (socket->state() == QAbstractSocket::UnconnectedState || socket->waitForDisconnected(3000)) {
-        qDebug() << "Отключено от сервера.";
+    if (socket->state() != QAbstractSocket::UnconnectedState && !socket->waitForDisconnected(3000)) {
+        qWarning() << "Не удалось отключиться от сервера. Принудительное отключение.";
+        socket->abort(); // Принудительно закрывает соединение
     } else {
-        qWarning() << "Не удалось отключиться от сервера.";
+        qDebug() << "Отключено от сервера.";
     }
 }
+
 
 void TcpClient::sendData(const QString &data)
 {
@@ -55,6 +65,7 @@ void TcpClient::sendData(const QString &data)
 void TcpClient::onDataReceived()
 {
     QByteArray response = socket->readAll();
+    emit messageReceived(response);
     qDebug() << "Ответ от сервера:" << response;
 }
 

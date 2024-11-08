@@ -7,7 +7,6 @@
 
 int main(int argc, char *argv[])
 {
-    Polynom polynom;
     TcpClient tcpClient;
     QApplication a(argc, argv);
     QLocale::setDefault(QLocale(QLocale::English, QLocale::UnitedStates));
@@ -20,7 +19,7 @@ int main(int argc, char *argv[])
             break;
         }
     }
-    MainWindow w(polynom, tcpClient);
+    MainWindow w(&tcpClient);
 
     w.show();
     return a.exec();

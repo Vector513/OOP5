@@ -10,9 +10,13 @@ class TcpClient : public QObject
 
 public:
     explicit TcpClient(QObject *parent = nullptr);
-    void connectToServer(const QString &host, quint16 port);
+    bool isConnected() const;
+    bool connectToServer(const QString &host, quint16 port);
     void disconnectFromServer();
     void sendData(const QString &data);
+
+signals:
+    void messageReceived(const QString& response);
 
 private slots:
     void onConnected();

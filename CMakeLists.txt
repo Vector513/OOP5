@@ -18,19 +18,15 @@ set(PROJECT_SOURCES
         main.cpp
         mainwindow.cpp
         mainwindow.h
-        mainwindow.ui
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(OOP5
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        polynom.h
-        array.h
-        complex.cpp complex.h
-        number.h polynom.cpp polynom.h
-        array.cpp
         tcpClient.h tcpClient.cpp
+        mainwindow.cpp
+        mainwindow.h
     )
 
 qt_add_translations(OOP5 TS_FILES OOP4_ru_RU.ts)

@@ -1,9 +1,11 @@
 #include "mainwindow.h"
+#include <QGroupBox>
+#include <QHBoxLayout>
+#include <QDoubleValidator>
 
-MainWindow::MainWindow(Polynom& otherPolynom, TcpClient& otherTcpClient, QWidget *parent)
+MainWindow::MainWindow(TcpClient* otherTcpClient, QWidget *parent)
     : QMainWindow(parent)
     , tcpClient(otherTcpClient)
-    , polynom(otherPolynom)
 {
     setWindowTitle("Polynomial");
     setMinimumSize(400, 300);
@@ -248,12 +250,6 @@ void MainWindow::setupConnectToServerSection(QWidget* parent, QVBoxLayout* paren
 
     connectToServerButton = new QPushButton("Подключиться");
     parentLayout->addWidget(connectToServerButton);
-
-    inputMessage = new QLineEdit("0");
-    parentLayout->addWidget(inputMessage);
-
-    sendButton = new QPushButton("Отправить");
-    parentLayout->addWidget(sendButton);
 }
 
 void MainWindow::connectSignals(QPushButton* changeAn, QPushButton* addRoot,
@@ -264,176 +260,80 @@ void MainWindow::connectSignals(QPushButton* changeAn, QPushButton* addRoot,
     connect(changeRoot, &QPushButton::clicked, this, &MainWindow::onChangeRootClicked);
     connect(rootsResize, &QPushButton::clicked, this, &MainWindow::onRootsResizeClicked);
     connect(evaluate, &QPushButton::clicked, this, &MainWindow::onEvaluateClicked);
-    connect(connectToServerButton, &QPushButton::clicked, this, &MainWindow::onConnectToServerClicked);
-    connect(sendButton, &QPushButton::clicked, this, &MainWindow::onSendMessageClicked);
+    connect(connectToServerButton, &QPushButton::clicked, this, &MainWindow::onChangeConnectionToServerClicked);
+    connect(tcpClient, &TcpClient::messageReceived, this, &MainWindow::onMessageReceived);
 }
 
 void MainWindow::onChangeAnClicked()
 {
-    polynom.setAn(number(inputAnRe->text().toDouble(), inputAnIm->text().toDouble()));
-    showPolynomClassic();
-    showPolynomCanon();
-    lastAction->setText("Последнее действие: Изменение An");
+    lastAction->setText("Отправлен запрос на изменение An");
+    tcpClient->sendData("changeAn " + (inputAnRe->text().isEmpty() ? "0" : inputAnRe->text()) + ' ' + (inputAnIm->text().isEmpty() ? "0" : inputAnIm->text()));
 }
 
 void MainWindow::onAddRootClicked()
 {
-    polynom.addRoot(number(inputRootRe->text().toDouble(), inputRootIm->text().toDouble()));
-    showPolynomClassic();
-    showPolynomCanon();
-    lastAction->setText("Последнее действие: Добавление корня");
+    lastAction->setText("Отправлен запрос на добавление корня");
+    tcpClient->sendData("addRoot " + (inputRootRe->text().isEmpty() ? "0" : inputRootRe->text()) + ' ' + (inputRootIm->text().isEmpty() ? "0" : inputRootIm->text()));
 }
 
 void MainWindow::onChangeRootClicked()
 {
-    if (inputIndex->text().toInt() >= 0 && inputIndex->text().toInt() < polynom.getRoots().getSize()) {
-        polynom.setRoot(inputIndex->text().toInt(), number(inputRootRe->text().toDouble(), inputRootIm->text().toDouble()));
-        showPolynomClassic();
-        showPolynomCanon();
-        lastAction->setText("Последнее действие: Изменение корня");
-    }
+    lastAction->setText("Отправлен запрос на изменение корня по индексу");
+    tcpClient->sendData("changeRoot " + (inputRootRe->text().isEmpty() ? "0" : inputRootRe->text()) + ' ' + (inputRootIm->text().isEmpty() ? "0" : inputRootIm->text()) + ' ' + (inputIndex->text().isEmpty() ? "0" : inputIndex->text()));
 }
 
 void MainWindow::onRootsResizeClicked()
 {
-    polynom.resize(inputResize->text().toInt());
-    showPolynomClassic();
-    showPolynomCanon();
-    lastAction->setText("Последнее действие: Изменение размера массива корней");
+    lastAction->setText("Отправлен запрос на изменение размера массива корней");
+    tcpClient->sendData("rootsResize " + (inputResize->text().isEmpty() ? "0" : inputResize->text()));
 }
 
 void MainWindow::onEvaluateClicked()
 {
-    QString res = "Результат: p(";
-    if (inputEvaluateRe->text().toDouble() != 0 || inputEvaluateIm->text().toDouble() != 0) {
-        if (inputEvaluateRe->text().toDouble() != 0) {
-            res += QString().setNum(inputEvaluateRe->text().toDouble());
-        }
-        if (inputEvaluateIm->text().toDouble() != 0) {
-            if (inputEvaluateIm->text().toDouble() > 0 && inputEvaluateRe->text().toDouble() != 0) res += "+";
-            res += QString().setNum(inputEvaluateIm->text().toDouble()) + "i";
-        }
-    }
-    else {
-        res += QString().setNum(inputEvaluateRe->text().toDouble());
-    }
-    res += ") = ";
-    if (polynom.evaluate(number(inputEvaluateRe->text().toDouble(), inputEvaluateIm->text().toDouble())).getRe() != 0 || polynom.evaluate(number(inputEvaluateRe->text().toDouble(), inputEvaluateIm->text().toDouble())).getIm() != 0) {
-        if (polynom.evaluate(number(inputEvaluateRe->text().toDouble(), inputEvaluateIm->text().toDouble())).getRe() != 0) {
-            res += QString().setNum(polynom.evaluate(number(inputEvaluateRe->text().toDouble(), inputEvaluateIm->text().toDouble())).getRe());
-        }
-        if (polynom.evaluate(number(inputEvaluateRe->text().toDouble(), inputEvaluateIm->text().toDouble())).getIm() != 0) {
-            if (polynom.evaluate(number(inputEvaluateRe->text().toDouble(), inputEvaluateIm->text().toDouble())).getIm() > 0) res += "+";
-            res += QString().setNum(polynom.evaluate(number(inputEvaluateRe->text().toDouble(), inputEvaluateIm->text().toDouble())).getIm()) + "i";
-        }
-    }
-    else {
-        res += "0";
-    }
-
-    evaluateOutput->setText(res);
-    lastAction->setText("Последнее действие: Вычисление в точке");
+    lastAction->setText("Отправлен запрос на вычисление в точке");
+    tcpClient->sendData("evaluate " + (inputEvaluateRe->text().isEmpty() ? "0" : inputEvaluateRe->text()) + ' ' + (inputEvaluateIm->text().isEmpty() ? "0" : inputEvaluateIm->text()));
 }
 
-void MainWindow::onConnectToServerClicked()
+void MainWindow::onChangeConnectionToServerClicked()
 {
-    tcpClient.connectToServer(inputAddress->text(), inputPort->text().toInt());
-    lastAction->setText("Последнее действие: Подключение к серверу");
-}
-
-void MainWindow::onSendMessageClicked()
-{
-    tcpClient.sendData(inputMessage->text());
-    lastAction->setText("Последнее действие: Отправка сообщения");
-}
-
-void MainWindow::showPolynomClassic() {
-    QString str("p(x) = ");
-    bool firstTerm = true;
-    bool needMinus = false;
-    for (size_t i = polynom.getCoefs().getSize(); i-- > 0.0;) {
-        if (polynom.getCoefs()[i].getRe() != 0.0 || polynom.getCoefs()[i].getIm() != 0.0) {
-            double re = polynom.getCoefs()[i].getRe();
-            double im = polynom.getCoefs()[i].getIm();
-
-            if (!firstTerm) {
-                needMinus = (re < 0.0 || (re == 0.0 && im < 0.0));
-                str+= needMinus ? " - " : " + ";
-            }
-            else {
-                firstTerm = false;
-            }
-
-            if (im == 0.0) {
-                if (re != 0.0) {
-                    str+=QString().setNum(std::abs(re));
-                }
-            }
-            else {
-                str+="(";
-
-                if (re != 0.0) {
-                    str+=QString().setNum(std::abs(re));
-                }
-                str+=((im > 0.0)^(needMinus) ? " + " : " - ");
-                str+=QString().setNum(std::abs(im));
-                str+="i)";
-            }
-
-
-            if (i > 0.0) {
-                str+="x";
-                if (i > 1) {
-                    str+="^";
-                    str+=QString().setNum(i);
-                }
-            }
-        }
-    }
-
-    if (firstTerm) {
-        str+="0";
-    }
-    polynomFirstForm->setText(str);
-
-}
-
-void MainWindow::showPolynomCanon() {
-    QString str("p(x) = ");
-
-    if (polynom.getAn().getRe() != 0.0 || polynom.getAn().getIm() != 0.0) {
-        if (polynom.getAn().getIm() == 0.0) {
-            str += QString().setNum(std::abs(polynom.getAn().getRe()));
+    if (!(tcpClient->isConnected())) {
+        if (tcpClient->connectToServer(inputAddress->text(), inputPort->text().toInt())) {
+            lastAction->setText("Подключён к серверу");
+            connectToServerButton->setText("Отключиться");
         }
         else {
-            str += "(";
-            if (polynom.getAn().getRe() != 0.0) {
-                std::cout << polynom.getAn().getRe();
-                str += QString().setNum(std::abs(polynom.getAn().getRe()));
-            }
-            str += ((polynom.getAn().getIm() > 0.0) ? " + " : " - ") + QString().setNum(std::abs(polynom.getAn().getIm())) + "i)";
-        }
-
-        if (polynom.getRoots().getSize() != 0.0) {
-            for (size_t i = 0.0; i < polynom.getRoots().getSize(); ++i) {
-                str += "(x";
-                double re = polynom.getRoots()[i].getRe();
-                double im = polynom.getRoots()[i].getIm();
-
-                if (re != 0.0) {
-                    str += (re > 0.0 ? " - " : " + ") +  QString().setNum(std::abs(re));
-                }
-
-                if (im != 0.0) {
-                    str += (im > 0.0 ? " - " : " + ") + QString().setNum(std::abs(im)) + "i";
-                }
-                str += ")";
-            }
+            lastAction->setText("Подключиться не удалось");
         }
     }
-
     else {
-        str += "0";
+        tcpClient->disconnectFromServer();
+        lastAction->setText("Отключён от сервера");
+        connectToServerButton->setText("Подключиться");
     }
-    polynomSecondForm->setText(str);
+}
+
+void MainWindow::onMessageReceived(const QString& response)
+{
+    if (lastAction->text() == "Отправлен запрос на изменение An") {
+        lastAction->setText("Получен результат изменения An");
+        polynomFirstForm->setText(response.section('\n', 0, 0));
+        polynomSecondForm->setText(response.section('\n', 1, 1));
+    } else if (lastAction->text() == "Отправлен запрос на добавление корня") {
+        lastAction->setText("Получен результат добавления корня");
+        polynomFirstForm->setText(response.section('\n', 0, 0));
+        polynomSecondForm->setText(response.section('\n', 1, 1));
+    } else if (lastAction->text() == "Отправлен запрос на изменение корня по индексу") {
+        lastAction->setText("Получен результат изменения корня");
+        polynomFirstForm->setText(response.section('\n', 0, 0));
+        polynomSecondForm->setText(response.section('\n', 1, 1));
+    } else if (lastAction->text() == "Отправлен запрос на изменение размера массива корней") {
+        lastAction->setText("Получен результат изменения размера массива корней");
+        polynomFirstForm->setText(response.section('\n', 0, 0));
+        polynomSecondForm->setText(response.section('\n', 1, 1));
+    } else if (lastAction->text() == "Отправлен запрос на вычисление в точке") {
+        lastAction->setText("Получен результат вычисления в точке");
+        evaluateOutput->setText("Результат: " + response);
+    } else {
+        lastAction->setText("Ответ сервера: " + response);
+    }
 }

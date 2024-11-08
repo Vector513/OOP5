@@ -2,14 +2,10 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QGroupBox>
 #include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QLineEdit>
-#include <QDoubleValidator>
-#include <QPushButton>
 #include <QLabel>
-#include "polynom.h"
+#include <QLineEdit>
+#include <QPushButton>
 #include "tcpClient.h"
 
 class MainWindow : public QMainWindow
@@ -17,14 +13,12 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(Polynom& otherPolynom, TcpClient& otherTcpClient, QWidget *parent = nullptr);
+    MainWindow(TcpClient* otherTcpClient, QWidget *parent = nullptr);
     ~MainWindow();
 
 private:
     //Ui::MainWindow *ui;
-
-    Polynom& polynom;
-    TcpClient& tcpClient;
+    TcpClient* tcpClient;
 
     QLabel *evaluateOutput, *polynomFirstForm, *polynomSecondForm, *lastAction;
     QLineEdit *inputAnRe, *inputAnIm, *inputRootRe, *inputRootIm, *inputIndex, *inputResize, *inputEvaluateRe, *inputEvaluateIm, *inputAddress, *inputPort, *inputMessage;
@@ -48,8 +42,9 @@ private slots:
     void onChangeRootClicked();
     void onRootsResizeClicked();
     void onEvaluateClicked();
-    void onConnectToServerClicked();
-    void onSendMessageClicked();
+    void onChangeConnectionToServerClicked();
+    //void onSendMessageClicked();
+    void onMessageReceived(const QString& response);
 };
 
 #endif // MAINWINDOW_H
